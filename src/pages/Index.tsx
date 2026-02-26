@@ -230,7 +230,7 @@ export default function Index() {
                   литературы
                 </h1>
                 <p className="text-lg leading-relaxed mb-10 font-light" style={{ color: 'rgba(250,247,240,0.65)', fontFamily: 'IBM Plex Sans, sans-serif' }}>
-                  Персональный сайт учителя русского языка и литературы МБОУ «Школа № 1».
+                  Персональный сайт учителя русского языка и литературы МБОУ «Закладинская СОШ».
                   Здесь вы найдёте учебные материалы, интерактивные задания и всё необходимое для успешной учёбы.
                 </p>
                 <div className="flex flex-wrap gap-4">
