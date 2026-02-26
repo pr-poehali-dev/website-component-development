@@ -328,13 +328,13 @@ export default function Index() {
               <div className="md:col-span-2 space-y-8">
                 <div>
                   <h3 className="text-3xl font-semibold mb-1" style={{ color: '#1a1410', fontFamily: 'Cormorant Garamond, serif' }}>Вероника Владимировна Вышиденко</h3>
-                  <p className="text-sm tracking-wide" style={{ color: '#8b6914', fontFamily: 'IBM Plex Sans, sans-serif' }}>Учитель высшей категории · Стаж 22 года</p>
+                  <p className="text-sm tracking-wide" style={{ color: '#8b6914', fontFamily: 'IBM Plex Sans, sans-serif' }}>Учитель русского языка и литературы · Заместитель директора по УВР · Стаж 5 лет</p>
                 </div>
                 <div className="grid sm:grid-cols-2 gap-6">
-                  <InfoBlock icon="GraduationCap" title="Образование" text="МПГУ, специальность «Русский язык и литература», 2003 г." />
-                  <InfoBlock icon="Award" title="Категория" text="Высшая квалификационная категория. Аттестация — 2023 г." />
-                  <InfoBlock icon="BookMarked" title="Повышение квалификации" text="ФИПИ, 2024 · МГПУ, 2023 · ЦПМ Москвы, 2022" />
-                  <InfoBlock icon="Star" title="Награды" text="Почётная грамота Министерства просвещения РФ · Грамота Департамента образования" />
+                  <InfoBlock icon="GraduationCap" title="Образование" text="АлтГПУ, Русский язык и литература, 2020 г. · Магистр, 2022 г." />
+                  <InfoBlock icon="Award" title="Категория и аттестация" text="Первая квалификационная категория. Аттестация — 2023 г." />
+                  <InfoBlock icon="BookMarked" title="Повышение квалификации" text="ФГБНУ «Федеральный институт родных языков» · КАУ ДПО «АИРО им. А.М. Топорова» · ФГБНУ «Институт содержания и методов обучения» · ФГАОУ ВО «Государственный университет просвещения»" />
+                  <InfoBlock icon="Star" title="Награды" text="Почётная грамота главы Романовского района · Почётная грамота комитета по образованию Романовского муниципалитета" />
                 </div>
                 <div className="border-l-2 pl-6" style={{ borderColor: '#8b6914' }}>
                   <h4 className="text-xl font-semibold mb-2" style={{ fontFamily: 'Cormorant Garamond, serif', color: '#1a1410' }}>Профессиональное кредо</h4>
@@ -345,7 +345,7 @@ export default function Index() {
                 <div>
                   <h4 className="text-xl font-semibold mb-3" style={{ fontFamily: 'Cormorant Garamond, serif', color: '#1a1410' }}>Увлечения</h4>
                   <div className="flex flex-wrap gap-2">
-                    {['Классическая литература', 'Театр', 'Каллиграфия', 'Краеведение', 'Пение в хоре'].map(h => (
+                    {['Классическая литература', 'Театр', 'Каллиграфия', 'Краеведение', 'Солистка народного ансамбля «Элегия»'].map(h => (
                       <span key={h} className="px-3 py-1 text-sm border" style={{ backgroundColor: 'rgba(232,220,200,0.4)', borderColor: '#e8dcc8', color: 'rgba(26,20,16,0.65)', fontFamily: 'IBM Plex Sans, sans-serif' }}>{h}</span>
                     ))}
                   </div>
@@ -600,10 +600,10 @@ export default function Index() {
               <div className="space-y-6">
                 <h3 className="text-2xl italic" style={{ color: '#faf7f0', fontFamily: 'Cormorant Garamond, serif' }}>Свяжитесь со мной</h3>
                 {[
-                  { icon: 'User', label: 'Вышиденко Вероника Владимировна', sub: 'Учитель русского языка и литературы' },
+                  { icon: 'User', label: 'Вышиденко Вероника Владимировна', sub: 'Учитель русского языка и литературы, зам. директора по УВР' },
                   { icon: 'Mail', label: 'sokolova@school1.ru', sub: 'Email' },
                   { icon: 'Phone', label: '+7 (495) 123-45-67', sub: 'Рабочий телефон' },
-                  { icon: 'MapPin', label: 'г. Москва, ул. Школьная, д. 1', sub: 'МБОУ «Школа № 1»' },
+                  { icon: 'MapPin', label: 'МБОУ «Закладинская СОШ»', sub: 'Романовский район' },
                 ].map((c, i) => (
                   <div key={i} className="flex items-center gap-4">
                     <div className="w-10 h-10 border flex items-center justify-center flex-shrink-0" style={{ borderColor: 'rgba(196,164,74,0.3)' }}>
@@ -664,7 +664,7 @@ export default function Index() {
 
         <footer className="py-8 px-6 text-center border-t" style={{ backgroundColor: '#2d1f0e', borderColor: 'rgba(250,247,240,0.05)' }}>
           <p className="italic text-sm" style={{ color: 'rgba(250,247,240,0.28)', fontFamily: 'Cormorant Garamond, serif' }}>
-            © 2026 · Вышиденко Вероника Владимировна · Учитель русского языка и литературы
+            © 2026 · Вышиденко Вероника Владимировна · Учитель русского языка и литературы · МБОУ «Закладинская СОШ»
           </p>
         </footer>
       </main>
