@@ -601,7 +601,7 @@ export default function Index() {
                 <h3 className="text-2xl italic" style={{ color: '#faf7f0', fontFamily: 'Cormorant Garamond, serif' }}>Свяжитесь со мной</h3>
                 {[
                   { icon: 'User', label: 'Вышиденко Вероника Владимировна', sub: 'Учитель русского языка и литературы, зам. директора по УВР' },
-                  { icon: 'Mail', label: 'sokolova@school1.ru', sub: 'Email' },
+                  { icon: 'Mail', label: 'veronika.vyshidenko@mail.ru', sub: 'Email' },
                   { icon: 'Phone', label: '+7 (495) 123-45-67', sub: 'Рабочий телефон' },
                   { icon: 'MapPin', label: 'МБОУ «Закладинская СОШ»', sub: 'Романовский район' },
                 ].map((c, i) => (
