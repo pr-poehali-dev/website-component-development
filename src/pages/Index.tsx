@@ -602,7 +602,6 @@ export default function Index() {
                 {[
                   { icon: 'User', label: 'Вышиденко Вероника Владимировна', sub: 'Учитель русского языка и литературы, зам. директора по УВР' },
                   { icon: 'Mail', label: 'veronika.vyshidenko@mail.ru', sub: 'Email' },
-                  { icon: 'Phone', label: '+7 (495) 123-45-67', sub: 'Рабочий телефон' },
                   { icon: 'MapPin', label: 'МБОУ «Закладинская СОШ»', sub: 'Романовский район' },
                 ].map((c, i) => (
                   <div key={i} className="flex items-center gap-4">
