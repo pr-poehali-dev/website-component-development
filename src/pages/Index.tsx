@@ -160,7 +160,7 @@ export default function Index() {
           <button onClick={() => scrollTo('home')} className="flex items-center gap-3">
             <span className="text-2xl" style={{ color: '#c4a44a', fontFamily: 'Cormorant Garamond, serif', fontStyle: 'italic' }}>✦</span>
             <div className="text-left">
-              <div className="font-semibold text-lg leading-tight" style={{ fontFamily: 'Cormorant Garamond, serif', color: '#1a1410' }}>Елена Михайловна</div>
+              <div className="font-semibold text-lg leading-tight" style={{ fontFamily: 'Cormorant Garamond, serif', color: '#1a1410' }}>Вероника Владимировна</div>
               <div className="text-xs tracking-widest uppercase" style={{ color: '#8b6914', fontFamily: 'IBM Plex Sans, sans-serif' }}>Русский язык · Литература</div>
             </div>
           </button>
@@ -327,7 +327,7 @@ export default function Index() {
 
               <div className="md:col-span-2 space-y-8">
                 <div>
-                  <h3 className="text-3xl font-semibold mb-1" style={{ color: '#1a1410', fontFamily: 'Cormorant Garamond, serif' }}>Елена Михайловна Соколова</h3>
+                  <h3 className="text-3xl font-semibold mb-1" style={{ color: '#1a1410', fontFamily: 'Cormorant Garamond, serif' }}>Вероника Владимировна Вышиденко</h3>
                   <p className="text-sm tracking-wide" style={{ color: '#8b6914', fontFamily: 'IBM Plex Sans, sans-serif' }}>Учитель высшей категории · Стаж 22 года</p>
                 </div>
                 <div className="grid sm:grid-cols-2 gap-6">
@@ -600,7 +600,7 @@ export default function Index() {
               <div className="space-y-6">
                 <h3 className="text-2xl italic" style={{ color: '#faf7f0', fontFamily: 'Cormorant Garamond, serif' }}>Свяжитесь со мной</h3>
                 {[
-                  { icon: 'User', label: 'Соколова Елена Михайловна', sub: 'Учитель русского языка и литературы' },
+                  { icon: 'User', label: 'Вышиденко Вероника Владимировна', sub: 'Учитель русского языка и литературы' },
                   { icon: 'Mail', label: 'sokolova@school1.ru', sub: 'Email' },
                   { icon: 'Phone', label: '+7 (495) 123-45-67', sub: 'Рабочий телефон' },
                   { icon: 'MapPin', label: 'г. Москва, ул. Школьная, д. 1', sub: 'МБОУ «Школа № 1»' },
@@ -664,7 +664,7 @@ export default function Index() {
 
         <footer className="py-8 px-6 text-center border-t" style={{ backgroundColor: '#2d1f0e', borderColor: 'rgba(250,247,240,0.05)' }}>
           <p className="italic text-sm" style={{ color: 'rgba(250,247,240,0.28)', fontFamily: 'Cormorant Garamond, serif' }}>
-            © 2026 · Соколова Елена Михайловна · Учитель русского языка и литературы
+            © 2026 · Вышиденко Вероника Владимировна · Учитель русского языка и литературы
           </p>
         </footer>
       </main>
