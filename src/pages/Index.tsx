@@ -313,10 +313,9 @@ export default function Index() {
                 <div className="relative">
                   <div className="aspect-[3/4] overflow-hidden border-2" style={{ borderColor: '#e8dcc8' }}>
                     <img
-                      src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&q=80"
-                      alt="Учитель"
-                      className="w-full h-full object-cover"
-                      style={{ filter: 'grayscale(15%) sepia(10%)' }}
+                      src="https://cdn.poehali.dev/projects/d7a5404b-4e2f-49ba-bacd-62605f3446dc/bucket/2aadb9a4-3e8b-48e5-a8b0-1266bce3437f.jpeg"
+                      alt="Вышиденко Вероника Владимировна"
+                      className="w-full h-full object-cover object-top"
                     />
                   </div>
                   <div className="absolute -bottom-4 -right-4 border p-3" style={{ borderColor: '#8b6914', backgroundColor: '#faf7f0' }}>
