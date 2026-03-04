@@ -79,25 +79,36 @@ function UploadPanel({ onUploaded, adminPassword, onAuth }: { onUploaded: () => 
   const upload = async () => {
     if (!file) return;
     setStatus('uploading');
-    const reader = new FileReader();
-    reader.onload = async (e) => {
-      const b64 = (e.target!.result as string).split(',')[1];
+    setErrorMsg('');
+    try {
+      // Шаг 1: получаем presigned URL от бэкенда
       const res = await fetch(UPLOAD_MATERIAL_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-Admin-Password': adminPassword },
-        body: JSON.stringify({ folder, filename: file.name, contentType: file.type, data: b64 }),
+        body: JSON.stringify({ folder, filename: file.name, contentType: file.type || 'application/octet-stream' }),
       });
-      if (res.ok) {
+      if (!res.ok) { setStatus('error'); setErrorMsg('Ошибка получения ссылки'); return; }
+      const { uploadUrl } = await res.json();
+
+      // Шаг 2: загружаем файл напрямую в S3
+      const uploadRes = await fetch(uploadUrl, {
+        method: 'PUT',
+        headers: { 'Content-Type': file.type || 'application/octet-stream' },
+        body: file,
+      });
+      if (uploadRes.ok) {
         setStatus('done');
         setFile(null);
         onUploaded();
         setTimeout(() => setStatus('idle'), 2500);
       } else {
         setStatus('error');
-        setErrorMsg('Ошибка загрузки');
+        setErrorMsg('Ошибка загрузки файла');
       }
-    };
-    reader.readAsDataURL(file);
+    } catch {
+      setStatus('error');
+      setErrorMsg('Ошибка соединения');
+    }
   };
 
   if (!open) {
