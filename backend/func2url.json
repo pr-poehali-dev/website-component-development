@@ -1,4 +1,6 @@
 {
+  "save-content": "https://functions.poehali.dev/59349ece-fb82-4c4f-b3e7-8e534a6f53e5",
+  "get-content": "https://functions.poehali.dev/8930dda9-347f-46fd-8812-2931fe8ba1a2",
   "delete-material": "https://functions.poehali.dev/00ee66d9-6422-4be7-9834-2b0f6dfea2fe",
   "upload-material": "https://functions.poehali.dev/4abf95ed-7c09-4a6b-a6a8-b565fce42a55",
   "list-materials": "https://functions.poehali.dev/634419af-a32b-49a6-a018-a0a56924f3ef"

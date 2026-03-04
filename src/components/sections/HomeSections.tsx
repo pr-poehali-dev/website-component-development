@@ -1,11 +1,6 @@
 import Icon from '@/components/ui/icon';
 import { NAV_ITEMS } from './SiteHeader';
-
-const NEWS = [
-  { date: '20 февраля 2026', title: 'Олимпиада по русскому языку', text: 'Поздравляем победителей городской олимпиады! Трое учеников вышли в региональный тур.' },
-  { date: '10 февраля 2026', title: 'Литературный вечер', text: 'Прошёл вечер памяти А.С. Пушкина. Ученики 8–11 классов читали стихи и прозу.' },
-  { date: '1 февраля 2026', title: 'Открытый урок', text: 'Приглашаем коллег на открытый урок по теме «Сложные синтаксические конструкции» — 5 марта.' },
-];
+import EditableText from '@/components/ui/EditableText';
 
 export default function HomeSections({ scrollTo }: { scrollTo: (id: string) => void }) {
   return (
@@ -25,16 +20,15 @@ export default function HomeSections({ scrollTo }: { scrollTo: (id: string) => v
         <div className="max-w-6xl mx-auto px-6 py-24 w-full">
           <div className="max-w-2xl opacity-0 animate-fade-in">
             <div className="text-xl mb-4 tracking-wide italic" style={{ color: '#c4a44a', fontFamily: 'Cormorant Garamond, serif' }}>
-              Добро пожаловать
+              <EditableText contentKey="hero.welcome" fallback="Добро пожаловать" />
             </div>
             <h1 className="text-5xl md:text-7xl font-light leading-tight mb-6" style={{ color: '#faf7f0', fontFamily: 'Cormorant Garamond, serif' }}>
-              Мир<br />
-              <em className="font-normal" style={{ color: '#c4a44a' }}>слова и</em><br />
-              литературы
+              <EditableText contentKey="hero.title1" fallback="Мир" /><br />
+              <em className="font-normal" style={{ color: '#c4a44a' }}><EditableText contentKey="hero.title2" fallback="слова и" /></em><br />
+              <EditableText contentKey="hero.title3" fallback="литературы" />
             </h1>
             <p className="text-lg leading-relaxed mb-10 font-light" style={{ color: 'rgba(250,247,240,0.65)', fontFamily: 'IBM Plex Sans, sans-serif' }}>
-              Персональный сайт учителя русского языка и литературы МБОУ «Закладинская СОШ».
-              Здесь вы найдёте учебные материалы, интерактивные задания и всё необходимое для успешной учёбы.
+              <EditableText contentKey="hero.subtitle" fallback="Персональный сайт учителя русского языка и литературы МБОУ «Закладинская СОШ». Здесь вы найдёте учебные материалы, интерактивные задания и всё необходимое для успешной учёбы." multiline />
             </p>
             <div className="flex flex-wrap gap-4">
               <button
@@ -42,23 +36,25 @@ export default function HomeSections({ scrollTo }: { scrollTo: (id: string) => v
                 className="px-6 py-3 text-sm tracking-wide transition-all duration-300"
                 style={{ backgroundColor: '#8b6914', color: '#faf7f0', fontFamily: 'IBM Plex Sans, sans-serif' }}
               >
-                Материалы для учащихся
+                <EditableText contentKey="hero.btn1" fallback="Материалы для учащихся" />
               </button>
               <button
                 onClick={() => scrollTo('about')}
                 className="px-6 py-3 text-sm tracking-wide transition-all duration-300 border"
                 style={{ borderColor: 'rgba(250,247,240,0.25)', color: 'rgba(250,247,240,0.75)', fontFamily: 'IBM Plex Sans, sans-serif' }}
               >
-                О педагоге
+                <EditableText contentKey="hero.btn2" fallback="О педагоге" />
               </button>
             </div>
           </div>
 
           <div className="absolute right-10 bottom-14 max-w-xs text-right hidden xl:block opacity-0 animate-fade-in-d4">
             <p className="italic text-2xl leading-snug" style={{ color: 'rgba(250,247,240,0.35)', fontFamily: 'Cormorant Garamond, serif' }}>
-              «Чтение — вот лучшее учение»
+              <EditableText contentKey="hero.quote" fallback="«Чтение — вот лучшее учение»" />
             </p>
-            <span className="text-xs tracking-widest uppercase mt-2 block" style={{ color: 'rgba(196,164,74,0.55)', fontFamily: 'IBM Plex Sans, sans-serif' }}>А.С. Пушкин</span>
+            <span className="text-xs tracking-widest uppercase mt-2 block" style={{ color: 'rgba(196,164,74,0.55)', fontFamily: 'IBM Plex Sans, sans-serif' }}>
+              <EditableText contentKey="hero.quote_author" fallback="А.С. Пушкин" />
+            </span>
           </div>
         </div>
       </div>
@@ -72,11 +68,21 @@ export default function HomeSections({ scrollTo }: { scrollTo: (id: string) => v
             <div className="flex-1 border-t ml-4" style={{ borderColor: '#e8dcc8' }} />
           </div>
           <div className="grid md:grid-cols-3 gap-6">
-            {NEWS.map((n, i) => (
+            {[1, 2, 3].map((i) => (
               <div key={i} className="p-6 border transition-colors group" style={{ backgroundColor: '#f5f0e8', borderColor: '#e8dcc8' }}>
-                <div className="text-xs tracking-widest uppercase mb-2" style={{ color: '#8b6914', fontFamily: 'IBM Plex Sans, sans-serif' }}>{n.date}</div>
-                <h3 className="text-xl font-semibold mb-3" style={{ color: '#1a1410', fontFamily: 'Cormorant Garamond, serif' }}>{n.title}</h3>
-                <p className="text-sm leading-relaxed" style={{ color: 'rgba(26,20,16,0.58)', fontFamily: 'IBM Plex Sans, sans-serif' }}>{n.text}</p>
+                <div className="text-xs tracking-widest uppercase mb-2" style={{ color: '#8b6914', fontFamily: 'IBM Plex Sans, sans-serif' }}>
+                  <EditableText contentKey={`news${i}.date`} fallback={['20 февраля 2026', '10 февраля 2026', '1 февраля 2026'][i - 1]} />
+                </div>
+                <h3 className="text-xl font-semibold mb-3" style={{ color: '#1a1410', fontFamily: 'Cormorant Garamond, serif' }}>
+                  <EditableText contentKey={`news${i}.title`} fallback={['Олимпиада по русскому языку', 'Литературный вечер', 'Открытый урок'][i - 1]} />
+                </h3>
+                <p className="text-sm leading-relaxed" style={{ color: 'rgba(26,20,16,0.58)', fontFamily: 'IBM Plex Sans, sans-serif' }}>
+                  <EditableText contentKey={`news${i}.text`} fallback={[
+                    'Поздравляем победителей городской олимпиады! Трое учеников вышли в региональный тур.',
+                    'Прошёл вечер памяти А.С. Пушкина. Ученики 8–11 классов читали стихи и прозу.',
+                    'Приглашаем коллег на открытый урок по теме «Сложные синтаксические конструкции» — 5 марта.',
+                  ][i - 1]} multiline />
+                </p>
               </div>
             ))}
           </div>

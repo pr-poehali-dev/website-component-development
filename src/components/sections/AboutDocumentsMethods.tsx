@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import Icon from '@/components/ui/icon';
+import EditableText from '@/components/ui/EditableText';
 
 const LIST_MATERIALS_URL = 'https://functions.poehali.dev/634419af-a32b-49a6-a018-a0a56924f3ef';
 const UPLOAD_MATERIAL_URL = 'https://functions.poehali.dev/4abf95ed-7c09-4a6b-a6a8-b565fce42a55';
@@ -209,14 +210,16 @@ function SectionTitle({ icon, title, subtitle }: { icon: string; title: string; 
   );
 }
 
-function InfoBlock({ icon, title, text }: { icon: string; title: string; text: string }) {
+function InfoBlock({ icon, title, editKey, fallback }: { icon: string; title: string; editKey: string; fallback: string }) {
   return (
     <div className="p-5 border" style={{ backgroundColor: '#f5f0e8', borderColor: '#e8dcc8' }}>
       <div className="flex items-center gap-2 mb-2">
         <Icon name={icon} fallback="Circle" size={14} style={{ color: '#8b6914' }} />
         <h5 className="text-sm font-medium tracking-wide uppercase" style={{ color: '#8b6914', fontFamily: 'IBM Plex Sans, sans-serif' }}>{title}</h5>
       </div>
-      <p className="text-sm leading-relaxed" style={{ color: 'rgba(26,20,16,0.65)', fontFamily: 'IBM Plex Sans, sans-serif' }}>{text}</p>
+      <p className="text-sm leading-relaxed" style={{ color: 'rgba(26,20,16,0.65)', fontFamily: 'IBM Plex Sans, sans-serif' }}>
+        <EditableText contentKey={editKey} fallback={fallback} multiline />
+      </p>
     </div>
   );
 }
@@ -269,26 +272,32 @@ export default function AboutDocumentsMethods() {
                   />
                 </div>
                 <div className="absolute -bottom-4 -right-4 border p-3" style={{ borderColor: '#8b6914', backgroundColor: '#faf7f0' }}>
-                  <p className="italic text-sm" style={{ color: '#8b6914', fontFamily: 'Cormorant Garamond, serif' }}>«Книга — корабль мысли»</p>
+                  <p className="italic text-sm" style={{ color: '#8b6914', fontFamily: 'Cormorant Garamond, serif' }}>
+                    <EditableText contentKey="about.motto" fallback="«Книга — корабль мысли»" />
+                  </p>
                 </div>
               </div>
             </div>
 
             <div className="md:col-span-2 space-y-8">
               <div>
-                <h3 className="text-3xl font-semibold mb-1" style={{ color: '#1a1410', fontFamily: 'Cormorant Garamond, serif' }}>Вероника Владимировна Вышиденко</h3>
-                <p className="text-sm tracking-wide" style={{ color: '#8b6914', fontFamily: 'IBM Plex Sans, sans-serif' }}>Учитель русского языка и литературы · Заместитель директора по УВР · Стаж 5 лет</p>
+                <h3 className="text-3xl font-semibold mb-1" style={{ color: '#1a1410', fontFamily: 'Cormorant Garamond, serif' }}>
+                  <EditableText contentKey="about.name" fallback="Вероника Владимировна Вышиденко" />
+                </h3>
+                <p className="text-sm tracking-wide" style={{ color: '#8b6914', fontFamily: 'IBM Plex Sans, sans-serif' }}>
+                  <EditableText contentKey="about.position" fallback="Учитель русского языка и литературы · Заместитель директора по УВР · Стаж 5 лет" />
+                </p>
               </div>
               <div className="grid sm:grid-cols-2 gap-6">
-                <InfoBlock icon="GraduationCap" title="Образование" text="АлтГПУ, Русский язык и литература, 2020 г. · Магистр, 2022 г." />
-                <InfoBlock icon="Award" title="Категория и аттестация" text="Первая квалификационная категория. Аттестация — 2023 г." />
-                <InfoBlock icon="BookMarked" title="Повышение квалификации" text="ФГБНУ «Федеральный институт родных языков» · КАУ ДПО «АИРО им. А.М. Топорова» · ФГБНУ «Институт содержания и методов обучения» · ФГАОУ ВО «Государственный университет просвещения»" />
-                <InfoBlock icon="Star" title="Награды" text="Почётная грамота главы Романовского района · Почётная грамота комитета по образованию Романовского муниципалитета" />
+                <InfoBlock icon="GraduationCap" title="Образование" editKey="about.education" fallback="АлтГПУ, Русский язык и литература, 2020 г. · Магистр, 2022 г." />
+                <InfoBlock icon="Award" title="Категория и аттестация" editKey="about.category" fallback="Первая квалификационная категория. Аттестация — 2023 г." />
+                <InfoBlock icon="BookMarked" title="Повышение квалификации" editKey="about.courses" fallback="ФГБНУ «Федеральный институт родных языков» · КАУ ДПО «АИРО им. А.М. Топорова» · ФГБНУ «Институт содержания и методов обучения» · ФГАОУ ВО «Государственный университет просвещения»" />
+                <InfoBlock icon="Star" title="Награды" editKey="about.awards" fallback="Почётная грамота главы Романовского района · Почётная грамота комитета по образованию Романовского муниципалитета" />
               </div>
               <div className="border-l-2 pl-6" style={{ borderColor: '#8b6914' }}>
                 <h4 className="text-xl font-semibold mb-2" style={{ fontFamily: 'Cormorant Garamond, serif', color: '#1a1410' }}>Профессиональное кредо</h4>
                 <p className="leading-relaxed italic text-sm" style={{ color: 'rgba(26,20,16,0.65)', fontFamily: 'IBM Plex Sans, sans-serif' }}>
-                  «Мой главный принцип — воспитать не просто грамотного человека, но и любящего читателя, способного чувствовать красоту слова и думать самостоятельно.»
+                  <EditableText contentKey="about.credo" fallback="«Мой главный принцип — воспитать не просто грамотного человека, но и любящего читателя, способного чувствовать красоту слова и думать самостоятельно.»" multiline />
                 </p>
               </div>
               <div>

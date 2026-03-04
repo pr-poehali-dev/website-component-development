@@ -1,0 +1,13 @@
+{
+  "tests": [
+    {
+      "name": "Отклонение без пароля",
+      "method": "POST",
+      "path": "/",
+      "headers": {},
+      "body": {},
+      "expectedStatus": 401,
+      "bodyMatcher": "partial"
+    }
+  ]
+}

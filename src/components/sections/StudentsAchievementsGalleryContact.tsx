@@ -1,4 +1,5 @@
 import Icon from '@/components/ui/icon';
+import EditableText from '@/components/ui/EditableText';
 
 const TESTS = [
   {
@@ -297,12 +298,12 @@ export default function StudentsAchievementsGalleryContact({
           <SectionTitle icon="Trophy" title="Достижения учащихся" subtitle="Конкурсы, олимпиады, проекты" />
           <div className="mt-12 grid md:grid-cols-3 gap-6 mb-12">
             {[
-              { name: 'Коваленко Алина, 10А', place: '1 место', event: 'Городская олимпиада по русскому языку 2025', icon: 'Medal' },
-              { name: 'Иванов Дмитрий, 9Б', place: '2 место', event: 'Региональная олимпиада по литературе 2025', icon: 'Award' },
-              { name: 'Петрова Мария, 11А', place: 'Призёр', event: 'Всероссийский конкурс сочинений «Моя страна»', icon: 'Star' },
-              { name: 'Сидоров Павел, 8В', place: '1 место', event: 'Конкурс чтецов «Живая классика»', icon: 'Mic' },
-              { name: 'Литвинова Настя, 7А', place: 'Победитель', event: 'Школьный конкурс исследовательских работ', icon: 'FlaskConical' },
-              { name: 'Команда 10–11 классов', place: '2 место', event: 'Межшкольная литературная викторина', icon: 'Users' },
+              { nameKey: 'ach1.name', placeKey: 'ach1.place', eventKey: 'ach1.event', name: 'Коваленко Алина, 10А', place: '1 место', event: 'Городская олимпиада по русскому языку 2025', icon: 'Medal' },
+              { nameKey: 'ach2.name', placeKey: 'ach2.place', eventKey: 'ach2.event', name: 'Иванов Дмитрий, 9Б', place: '2 место', event: 'Региональная олимпиада по литературе 2025', icon: 'Award' },
+              { nameKey: 'ach3.name', placeKey: 'ach3.place', eventKey: 'ach3.event', name: 'Петрова Мария, 11А', place: 'Призёр', event: 'Всероссийский конкурс сочинений «Моя страна»', icon: 'Star' },
+              { nameKey: 'ach4.name', placeKey: 'ach4.place', eventKey: 'ach4.event', name: 'Сидоров Павел, 8В', place: '1 место', event: 'Конкурс чтецов «Живая классика»', icon: 'Mic' },
+              { nameKey: 'ach5.name', placeKey: 'ach5.place', eventKey: 'ach5.event', name: 'Литвинова Настя, 7А', place: 'Победитель', event: 'Школьный конкурс исследовательских работ', icon: 'FlaskConical' },
+              { nameKey: 'ach6.name', placeKey: 'ach6.place', eventKey: 'ach6.event', name: 'Команда 10–11 классов', place: '2 место', event: 'Межшкольная литературная викторина', icon: 'Users' },
             ].map((a, i) => (
               <div key={i} className="p-5 border transition-all" style={{ backgroundColor: '#f5f0e8', borderColor: '#e8dcc8' }}>
                 <div className="flex items-start gap-3">
@@ -310,9 +311,15 @@ export default function StudentsAchievementsGalleryContact({
                     <Icon name={a.icon} fallback="Award" size={16} style={{ color: '#8b6914' }} />
                   </div>
                   <div>
-                    <div className="text-xs tracking-wide uppercase mb-1" style={{ color: '#8b6914', fontFamily: 'IBM Plex Sans, sans-serif' }}>{a.place}</div>
-                    <div className="text-lg font-semibold" style={{ color: '#1a1410', fontFamily: 'Cormorant Garamond, serif' }}>{a.name}</div>
-                    <div className="text-xs mt-1 leading-relaxed" style={{ color: 'rgba(26,20,16,0.45)', fontFamily: 'IBM Plex Sans, sans-serif' }}>{a.event}</div>
+                    <div className="text-xs tracking-wide uppercase mb-1" style={{ color: '#8b6914', fontFamily: 'IBM Plex Sans, sans-serif' }}>
+                      <EditableText contentKey={a.placeKey} fallback={a.place} />
+                    </div>
+                    <div className="text-lg font-semibold" style={{ color: '#1a1410', fontFamily: 'Cormorant Garamond, serif' }}>
+                      <EditableText contentKey={a.nameKey} fallback={a.name} />
+                    </div>
+                    <div className="text-xs mt-1 leading-relaxed" style={{ color: 'rgba(26,20,16,0.45)', fontFamily: 'IBM Plex Sans, sans-serif' }}>
+                      <EditableText contentKey={a.eventKey} fallback={a.event} />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -376,24 +383,32 @@ export default function StudentsAchievementsGalleryContact({
             <div className="space-y-6">
               <h3 className="text-2xl italic" style={{ color: '#faf7f0', fontFamily: 'Cormorant Garamond, serif' }}>Свяжитесь со мной</h3>
               {[
-                { icon: 'User', label: 'Вышиденко Вероника Владимировна', sub: 'Учитель русского языка и литературы, зам. директора по УВР' },
-                { icon: 'Mail', label: 'veronika.vyshidenko@mail.ru', sub: 'Email' },
-                { icon: 'MapPin', label: 'МБОУ «Закладинская СОШ»', sub: 'Романовский район' },
+                { icon: 'User', labelKey: 'contact.name', label: 'Вышиденко Вероника Владимировна', subKey: 'contact.position', sub: 'Учитель русского языка и литературы, зам. директора по УВР' },
+                { icon: 'Mail', labelKey: 'contact.email', label: 'veronika.vyshidenko@mail.ru', subKey: 'contact.email_label', sub: 'Email' },
+                { icon: 'MapPin', labelKey: 'contact.school', label: 'МБОУ «Закладинская СОШ»', subKey: 'contact.district', sub: 'Романовский район' },
               ].map((c, i) => (
                 <div key={i} className="flex items-center gap-4">
                   <div className="w-10 h-10 border flex items-center justify-center flex-shrink-0" style={{ borderColor: 'rgba(196,164,74,0.3)' }}>
                     <Icon name={c.icon} fallback="Circle" size={16} style={{ color: '#c4a44a' }} />
                   </div>
                   <div>
-                    <p className="text-sm" style={{ color: 'rgba(250,247,240,0.85)', fontFamily: 'IBM Plex Sans, sans-serif' }}>{c.label}</p>
-                    <p className="text-xs" style={{ color: 'rgba(250,247,240,0.38)', fontFamily: 'IBM Plex Sans, sans-serif' }}>{c.sub}</p>
+                    <p className="text-sm" style={{ color: 'rgba(250,247,240,0.85)', fontFamily: 'IBM Plex Sans, sans-serif' }}>
+                      <EditableText contentKey={c.labelKey} fallback={c.label} />
+                    </p>
+                    <p className="text-xs" style={{ color: 'rgba(250,247,240,0.38)', fontFamily: 'IBM Plex Sans, sans-serif' }}>
+                      <EditableText contentKey={c.subKey} fallback={c.sub} />
+                    </p>
                   </div>
                 </div>
               ))}
               <div className="pt-4 border-t" style={{ borderColor: 'rgba(250,247,240,0.08)' }}>
                 <p className="text-xs mb-3 uppercase tracking-widest" style={{ color: 'rgba(250,247,240,0.35)', fontFamily: 'IBM Plex Sans, sans-serif' }}>Часы приёма</p>
-                <p className="text-sm" style={{ color: 'rgba(250,247,240,0.65)', fontFamily: 'IBM Plex Sans, sans-serif' }}>Пн, Ср, Пт — 15:00–16:30</p>
-                <p className="text-sm" style={{ color: 'rgba(250,247,240,0.65)', fontFamily: 'IBM Plex Sans, sans-serif' }}>Кабинет № 215</p>
+                <p className="text-sm" style={{ color: 'rgba(250,247,240,0.65)', fontFamily: 'IBM Plex Sans, sans-serif' }}>
+                  <EditableText contentKey="contact.hours" fallback="Пн, Ср, Пт — 15:00–16:30" />
+                </p>
+                <p className="text-sm" style={{ color: 'rgba(250,247,240,0.65)', fontFamily: 'IBM Plex Sans, sans-serif' }}>
+                  <EditableText contentKey="contact.room" fallback="Кабинет № 215" />
+                </p>
               </div>
             </div>
 
@@ -439,7 +454,7 @@ export default function StudentsAchievementsGalleryContact({
 
       <footer className="py-8 px-6 text-center border-t" style={{ backgroundColor: '#2d1f0e', borderColor: 'rgba(250,247,240,0.05)' }}>
         <p className="italic text-sm" style={{ color: 'rgba(250,247,240,0.28)', fontFamily: 'Cormorant Garamond, serif' }}>
-          © 2026 · Вышиденко Вероника Владимировна · Учитель русского языка и литературы · МБОУ «Закладинская СОШ»
+          <EditableText contentKey="footer.text" fallback="© 2026 · Вышиденко Вероника Владимировна · Учитель русского языка и литературы · МБОУ «Закладинская СОШ»" />
         </p>
       </footer>
     </>
