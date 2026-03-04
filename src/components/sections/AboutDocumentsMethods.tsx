@@ -69,8 +69,13 @@ function UploadPanel({ onUploaded, adminPassword, onAuth }: { onUploaded: () => 
   const checkPassword = async () => {
     const res = await fetch(UPLOAD_MATERIAL_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-Admin-Password': passwordInput },
-      body: JSON.stringify({ folder: 'lessons', filename: '', data: '' }),
+      headers: {
+        'Content-Type': 'application/octet-stream',
+        'X-Admin-Password': passwordInput,
+        'X-File-Name': 'check',
+        'X-File-Folder': 'lessons',
+      },
+      body: new Uint8Array(0),
     });
     if (res.status !== 401) { onAuth(passwordInput); setErrorMsg(''); }
     else { setErrorMsg('Неверный пароль'); }
@@ -81,29 +86,26 @@ function UploadPanel({ onUploaded, adminPassword, onAuth }: { onUploaded: () => 
     setStatus('uploading');
     setErrorMsg('');
     try {
-      // Шаг 1: получаем presigned URL от бэкенда
+      const contentType = file.type || 'application/octet-stream';
       const res = await fetch(UPLOAD_MATERIAL_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-Admin-Password': adminPassword },
-        body: JSON.stringify({ folder, filename: file.name, contentType: file.type || 'application/octet-stream' }),
-      });
-      if (!res.ok) { setStatus('error'); setErrorMsg('Ошибка получения ссылки'); return; }
-      const { uploadUrl } = await res.json();
-
-      // Шаг 2: загружаем файл напрямую в S3
-      const uploadRes = await fetch(uploadUrl, {
-        method: 'PUT',
-        headers: { 'Content-Type': file.type || 'application/octet-stream' },
+        headers: {
+          'Content-Type': contentType,
+          'X-Admin-Password': adminPassword,
+          'X-File-Name': encodeURIComponent(file.name),
+          'X-File-Folder': folder,
+        },
         body: file,
       });
-      if (uploadRes.ok) {
+      if (res.ok) {
         setStatus('done');
         setFile(null);
         onUploaded();
         setTimeout(() => setStatus('idle'), 2500);
       } else {
+        const err = await res.json().catch(() => ({}));
         setStatus('error');
-        setErrorMsg('Ошибка загрузки файла');
+        setErrorMsg(err.error || 'Ошибка загрузки');
       }
     } catch {
       setStatus('error');
