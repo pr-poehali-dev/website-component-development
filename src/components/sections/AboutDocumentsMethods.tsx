@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Icon from '@/components/ui/icon';
 
 const LIST_MATERIALS_URL = 'https://functions.poehali.dev/634419af-a32b-49a6-a018-a0a56924f3ef';
+const UPLOAD_MATERIAL_URL = 'https://functions.poehali.dev/4abf95ed-7c09-4a6b-a6a8-b565fce42a55';
 
 interface Material {
   key: string;
@@ -49,6 +50,145 @@ function VideoCard({ item }: { item: Material }) {
   );
 }
 
+function UploadPanel({ onUploaded }: { onUploaded: () => void }) {
+  const [open, setOpen] = useState(false);
+  const [password, setPassword] = useState('');
+  const [authed, setAuthed] = useState(false);
+  const [folder, setFolder] = useState<'lessons' | 'videos'>('lessons');
+  const [file, setFile] = useState<File | null>(null);
+  const [status, setStatus] = useState<'idle' | 'uploading' | 'done' | 'error'>('idle');
+  const [errorMsg, setErrorMsg] = useState('');
+
+  const checkPassword = async () => {
+    const res = await fetch(UPLOAD_MATERIAL_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Password': password },
+      body: JSON.stringify({ folder: 'lessons', filename: '', data: '' }),
+    });
+    if (res.status !== 401) { setAuthed(true); setErrorMsg(''); }
+    else { setErrorMsg('Неверный пароль'); }
+  };
+
+  const upload = async () => {
+    if (!file) return;
+    setStatus('uploading');
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      const b64 = (e.target!.result as string).split(',')[1];
+      const res = await fetch(UPLOAD_MATERIAL_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Admin-Password': password },
+        body: JSON.stringify({ folder, filename: file.name, contentType: file.type, data: b64 }),
+      });
+      if (res.ok) {
+        setStatus('done');
+        setFile(null);
+        onUploaded();
+        setTimeout(() => setStatus('idle'), 2500);
+      } else {
+        setStatus('error');
+        setErrorMsg('Ошибка загрузки');
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  if (!open) {
+    return (
+      <button
+        onClick={() => setOpen(true)}
+        className="flex items-center gap-2 px-4 py-2 border text-sm transition-all"
+        style={{ borderColor: '#8b6914', color: '#8b6914', backgroundColor: 'transparent', fontFamily: 'IBM Plex Sans, sans-serif' }}
+      >
+        <Icon name="Upload" size={14} />
+        Загрузить материал
+      </button>
+    );
+  }
+
+  return (
+    <div className="border p-5 space-y-4" style={{ borderColor: '#8b6914', backgroundColor: '#faf7f0' }}>
+      <div className="flex items-center justify-between">
+        <p className="text-sm font-medium" style={{ color: '#8b6914', fontFamily: 'IBM Plex Sans, sans-serif' }}>Загрузка материала</p>
+        <button onClick={() => { setOpen(false); setAuthed(false); setPassword(''); setStatus('idle'); }}>
+          <Icon name="X" size={16} style={{ color: 'rgba(26,20,16,0.4)' }} />
+        </button>
+      </div>
+
+      {!authed ? (
+        <div className="flex gap-2">
+          <input
+            type="password"
+            placeholder="Пароль администратора"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && checkPassword()}
+            className="flex-1 border px-3 py-2 text-sm bg-transparent outline-none"
+            style={{ borderColor: '#e8dcc8', color: '#1a1410', fontFamily: 'IBM Plex Sans, sans-serif' }}
+          />
+          <button
+            onClick={checkPassword}
+            className="px-4 py-2 text-sm"
+            style={{ backgroundColor: '#8b6914', color: '#faf7f0', fontFamily: 'IBM Plex Sans, sans-serif' }}
+          >
+            Войти
+          </button>
+        </div>
+      ) : (
+        <>
+          <div className="flex gap-3">
+            {(['lessons', 'videos'] as const).map(f => (
+              <button
+                key={f}
+                onClick={() => setFolder(f)}
+                className="flex-1 py-2 text-sm border transition-all"
+                style={{
+                  borderColor: '#e8dcc8',
+                  backgroundColor: folder === f ? '#8b6914' : 'transparent',
+                  color: folder === f ? '#faf7f0' : 'rgba(26,20,16,0.6)',
+                  fontFamily: 'IBM Plex Sans, sans-serif',
+                }}
+              >
+                {f === 'lessons' ? 'Конспект урока' : 'Видео'}
+              </button>
+            ))}
+          </div>
+
+          <label
+            className="flex flex-col items-center justify-center gap-2 border-2 border-dashed py-6 cursor-pointer"
+            style={{ borderColor: '#e8dcc8' }}
+          >
+            <Icon name="UploadCloud" size={24} style={{ color: '#8b6914' }} />
+            <span className="text-sm" style={{ color: 'rgba(26,20,16,0.5)', fontFamily: 'IBM Plex Sans, sans-serif' }}>
+              {file ? file.name : 'Нажмите или перетащите файл'}
+            </span>
+            <input type="file" className="hidden" onChange={e => setFile(e.target.files?.[0] ?? null)} />
+          </label>
+
+          {file && status !== 'done' && (
+            <button
+              onClick={upload}
+              disabled={status === 'uploading'}
+              className="w-full py-2 text-sm"
+              style={{ backgroundColor: '#8b6914', color: '#faf7f0', fontFamily: 'IBM Plex Sans, sans-serif', opacity: status === 'uploading' ? 0.6 : 1 }}
+            >
+              {status === 'uploading' ? 'Загружаю…' : 'Загрузить'}
+            </button>
+          )}
+
+          {status === 'done' && (
+            <p className="text-sm text-center" style={{ color: '#8b6914', fontFamily: 'IBM Plex Sans, sans-serif' }}>Файл успешно загружен!</p>
+          )}
+        </>
+      )}
+
+      {errorMsg && (
+        <p className="text-sm" style={{ color: '#c0392b', fontFamily: 'IBM Plex Sans, sans-serif' }}>{errorMsg}</p>
+      )}
+    </div>
+  );
+}
+
 function SectionTitle({ icon, title, subtitle }: { icon: string; title: string; subtitle: string }) {
   return (
     <div className="flex items-start gap-5">
@@ -80,7 +220,8 @@ export default function AboutDocumentsMethods() {
   const [videos, setVideos] = useState<Material[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const loadMaterials = () => {
+    setLoading(true);
     fetch(LIST_MATERIALS_URL)
       .then(r => r.json())
       .then(data => {
@@ -88,7 +229,9 @@ export default function AboutDocumentsMethods() {
         setVideos(data.videos ?? []);
       })
       .finally(() => setLoading(false));
-  }, []);
+  };
+
+  useEffect(() => { loadMaterials(); }, []);
 
   return (
     <>
@@ -177,7 +320,10 @@ export default function AboutDocumentsMethods() {
       {/* ── МЕТОДИЧЕСКАЯ КОПИЛКА ── */}
       <section id="methods" className="py-20 px-6 border-t" style={{ backgroundColor: '#faf7f0', borderColor: '#e8dcc8' }}>
         <div className="max-w-6xl mx-auto">
-          <SectionTitle icon="BookOpen" title="Методическая копилка" subtitle="Уроки и внеурочная работа" />
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <SectionTitle icon="BookOpen" title="Методическая копилка" subtitle="Уроки и внеурочная работа" />
+            <UploadPanel onUploaded={loadMaterials} />
+          </div>
 
           {loading && (
             <div className="mt-12 text-center py-12" style={{ color: 'rgba(26,20,16,0.38)', fontFamily: 'IBM Plex Sans, sans-serif' }}>
