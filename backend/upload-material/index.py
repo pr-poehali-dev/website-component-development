@@ -57,7 +57,6 @@ def handler(event: dict, context) -> dict:
         Key=key,
         Body=file_bytes,
         ContentType=content_type,
-        Metadata={'original-name': filename},
     )
 
     key_id = os.environ['AWS_ACCESS_KEY_ID']
