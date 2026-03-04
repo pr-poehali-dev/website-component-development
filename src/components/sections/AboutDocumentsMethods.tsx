@@ -1,4 +1,53 @@
+import { useState, useEffect } from 'react';
 import Icon from '@/components/ui/icon';
+
+const LIST_MATERIALS_URL = 'https://functions.poehali.dev/634419af-a32b-49a6-a018-a0a56924f3ef';
+
+interface Material {
+  key: string;
+  name: string;
+  url: string;
+  size: number;
+}
+
+function formatSize(bytes: number) {
+  if (bytes < 1024) return `${bytes} Б`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} КБ`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} МБ`;
+}
+
+function ext(name: string) {
+  return name.split('.').pop()?.toUpperCase() ?? '';
+}
+
+function VideoCard({ item }: { item: Material }) {
+  const [open, setOpen] = useState(false);
+  const isVideo = /\.(mp4|webm|ogv|mov)$/i.test(item.name);
+  const label = item.name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ');
+  return (
+    <div className="border overflow-hidden" style={{ borderColor: '#e8dcc8', backgroundColor: '#f5f0e8' }}>
+      {isVideo && open ? (
+        <video controls autoPlay className="w-full aspect-video bg-black">
+          <source src={item.url} />
+        </video>
+      ) : (
+        <div
+          className="w-full aspect-video flex items-center justify-center cursor-pointer"
+          style={{ backgroundColor: '#1a1410' }}
+          onClick={() => isVideo ? setOpen(true) : window.open(item.url, '_blank')}
+        >
+          <Icon name={isVideo ? 'Play' : 'FileVideo'} fallback="Play" size={36} style={{ color: '#8b6914' }} />
+        </div>
+      )}
+      <div className="p-3 flex items-center justify-between gap-2">
+        <p className="text-sm leading-snug flex-1" style={{ color: '#1a1410', fontFamily: 'IBM Plex Sans, sans-serif' }}>{label}</p>
+        <a href={item.url} target="_blank" rel="noreferrer" onClick={e => e.stopPropagation()}>
+          <Icon name="Download" size={14} style={{ color: 'rgba(26,20,16,0.3)' }} />
+        </a>
+      </div>
+    </div>
+  );
+}
 
 function SectionTitle({ icon, title, subtitle }: { icon: string; title: string; subtitle: string }) {
   return (
@@ -27,6 +76,20 @@ function InfoBlock({ icon, title, text }: { icon: string; title: string; text: s
 }
 
 export default function AboutDocumentsMethods() {
+  const [lessons, setLessons] = useState<Material[]>([]);
+  const [videos, setVideos] = useState<Material[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch(LIST_MATERIALS_URL)
+      .then(r => r.json())
+      .then(data => {
+        setLessons(data.lessons ?? []);
+        setVideos(data.videos ?? []);
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
   return (
     <>
       {/* ── О ПЕДАГОГЕ ── */}
@@ -115,6 +178,72 @@ export default function AboutDocumentsMethods() {
       <section id="methods" className="py-20 px-6 border-t" style={{ backgroundColor: '#faf7f0', borderColor: '#e8dcc8' }}>
         <div className="max-w-6xl mx-auto">
           <SectionTitle icon="BookOpen" title="Методическая копилка" subtitle="Уроки и внеурочная работа" />
+
+          {loading && (
+            <div className="mt-12 text-center py-12" style={{ color: 'rgba(26,20,16,0.38)', fontFamily: 'IBM Plex Sans, sans-serif' }}>
+              Загрузка материалов…
+            </div>
+          )}
+
+          {!loading && lessons.length === 0 && videos.length === 0 && (
+            <div className="mt-12 text-center py-12" style={{ color: 'rgba(26,20,16,0.38)', fontFamily: 'IBM Plex Sans, sans-serif' }}>
+              Материалы пока не загружены. Добавьте файлы в папки <strong>lessons/</strong> и <strong>videos/</strong> в хранилище.
+            </div>
+          )}
+
+          {!loading && (lessons.length > 0 || videos.length > 0) && (
+            <div className="mt-12 space-y-12">
+
+              {lessons.length > 0 && (
+                <div>
+                  <h3 className="text-2xl font-semibold mb-6 flex items-center gap-3" style={{ color: '#1a1410', fontFamily: 'Cormorant Garamond, serif' }}>
+                    <Icon name="BookMarked" size={20} style={{ color: '#8b6914' }} />
+                    Конспекты уроков
+                  </h3>
+                  <div className="space-y-3">
+                    {lessons.map((item) => (
+                      <a
+                        key={item.key}
+                        href={item.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="flex items-center gap-4 p-3 border cursor-pointer transition-all group no-underline"
+                        style={{ backgroundColor: '#f5f0e8', borderColor: '#e8dcc8' }}
+                      >
+                        <Icon name="FileText" fallback="FileText" size={16} style={{ color: '#8b6914', flexShrink: 0 }} />
+                        <div className="flex-1">
+                          <p className="text-sm" style={{ color: '#1a1410', fontFamily: 'IBM Plex Sans, sans-serif' }}>
+                            {item.name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ')}
+                          </p>
+                          <p className="text-xs" style={{ color: 'rgba(26,20,16,0.38)', fontFamily: 'IBM Plex Sans, sans-serif' }}>
+                            {ext(item.name)} · {formatSize(item.size)}
+                          </p>
+                        </div>
+                        <Icon name="Download" size={14} style={{ color: 'rgba(26,20,16,0.2)' }} />
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {videos.length > 0 && (
+                <div>
+                  <h3 className="text-2xl font-semibold mb-6 flex items-center gap-3" style={{ color: '#1a1410', fontFamily: 'Cormorant Garamond, serif' }}>
+                    <Icon name="Video" size={20} style={{ color: '#8b6914' }} />
+                    Видеоматериалы
+                  </h3>
+                  <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {videos.map((item) => (
+                      <VideoCard key={item.key} item={item} />
+                    ))}
+                  </div>
+                </div>
+              )}
+
+            </div>
+          )}
+
+          {/* Статичная часть — внеклассная работа */}
           <div className="mt-12 grid md:grid-cols-2 gap-8">
             <div>
               <h3 className="text-2xl font-semibold mb-6 flex items-center gap-3" style={{ color: '#1a1410', fontFamily: 'Cormorant Garamond, serif' }}>
