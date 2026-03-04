@@ -22,17 +22,21 @@ def handler(event: dict, context) -> dict:
     if event.get('httpMethod') == 'OPTIONS':
         return {'statusCode': 200, 'headers': CORS, 'body': ''}
 
-    password = event.get('headers', {}).get('X-Admin-Password', '')
+    # Заголовки могут прийти в любом регистре — нормализуем
+    raw_headers = event.get('headers', {})
+    headers = {k.lower(): v for k, v in raw_headers.items()}
+
+    password = headers.get('x-admin-password', '')
     if password != os.environ.get('ADMIN_PASSWORD', ''):
         return {'statusCode': 401, 'headers': CORS, 'body': json.dumps({'error': 'Неверный пароль'})}
-
-    headers = event.get('headers', {})
-    folder = headers.get('X-File-Folder', 'lessons')
-    filename = unquote_plus(headers.get('X-File-Name', ''))
-    content_type = headers.get('Content-Type', 'application/octet-stream')
+    folder = headers.get('x-file-folder', 'lessons')
+    filename = unquote_plus(headers.get('x-file-name', ''))
+    content_type = headers.get('content-type', 'application/octet-stream')
 
     if folder not in ('lessons', 'videos'):
         return {'statusCode': 400, 'headers': CORS, 'body': json.dumps({'error': 'Неверная папка'})}
+
+    print(f"[upload] folder={folder!r} filename={filename!r} content_type={content_type!r} isBase64={event.get('isBase64Encoded')}")
 
     if not filename:
         return {'statusCode': 400, 'headers': CORS, 'body': json.dumps({'error': 'Нет имени файла'})}
@@ -62,6 +66,7 @@ def handler(event: dict, context) -> dict:
 
     key_id = os.environ['AWS_ACCESS_KEY_ID']
     cdn_url = f"https://cdn.poehali.dev/projects/{key_id}/bucket/{key}"
+    print(f"[upload] SUCCESS key={key!r} bytes={len(file_bytes)} cdn={cdn_url}")
 
     return {
         'statusCode': 200,
