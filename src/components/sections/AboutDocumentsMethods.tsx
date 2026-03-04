@@ -3,6 +3,7 @@ import Icon from '@/components/ui/icon';
 
 const LIST_MATERIALS_URL = 'https://functions.poehali.dev/634419af-a32b-49a6-a018-a0a56924f3ef';
 const UPLOAD_MATERIAL_URL = 'https://functions.poehali.dev/4abf95ed-7c09-4a6b-a6a8-b565fce42a55';
+const DELETE_MATERIAL_URL = 'https://functions.poehali.dev/00ee66d9-6422-4be7-9834-2b0f6dfea2fe';
 
 interface Material {
   key: string;
@@ -21,7 +22,7 @@ function ext(name: string) {
   return name.split('.').pop()?.toUpperCase() ?? '';
 }
 
-function VideoCard({ item }: { item: Material }) {
+function VideoCard({ item, adminPassword, onDelete, deleting }: { item: Material; adminPassword: string; onDelete: (key: string) => void; deleting: string | null }) {
   const [open, setOpen] = useState(false);
   const isVideo = /\.(mp4|webm|ogv|mov)$/i.test(item.name);
   const label = item.name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ');
@@ -45,15 +46,20 @@ function VideoCard({ item }: { item: Material }) {
         <a href={item.url} target="_blank" rel="noreferrer" onClick={e => e.stopPropagation()}>
           <Icon name="Download" size={14} style={{ color: 'rgba(26,20,16,0.3)' }} />
         </a>
+        {adminPassword && (
+          <button onClick={() => onDelete(item.key)} disabled={deleting === item.key} title="Удалить">
+            <Icon name={deleting === item.key ? 'Loader' : 'Trash2'} size={14} style={{ color: '#c0392b', opacity: deleting === item.key ? 0.5 : 1 }} />
+          </button>
+        )}
       </div>
     </div>
   );
 }
 
-function UploadPanel({ onUploaded }: { onUploaded: () => void }) {
+function UploadPanel({ onUploaded, adminPassword, onAuth }: { onUploaded: () => void; adminPassword: string; onAuth: (p: string) => void }) {
   const [open, setOpen] = useState(false);
-  const [password, setPassword] = useState('');
-  const [authed, setAuthed] = useState(false);
+  const [passwordInput, setPasswordInput] = useState('');
+  const authed = adminPassword !== '';
   const [folder, setFolder] = useState<'lessons' | 'videos'>('lessons');
   const [file, setFile] = useState<File | null>(null);
   const [status, setStatus] = useState<'idle' | 'uploading' | 'done' | 'error'>('idle');
@@ -62,10 +68,10 @@ function UploadPanel({ onUploaded }: { onUploaded: () => void }) {
   const checkPassword = async () => {
     const res = await fetch(UPLOAD_MATERIAL_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-Admin-Password': password },
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Password': passwordInput },
       body: JSON.stringify({ folder: 'lessons', filename: '', data: '' }),
     });
-    if (res.status !== 401) { setAuthed(true); setErrorMsg(''); }
+    if (res.status !== 401) { onAuth(passwordInput); setErrorMsg(''); }
     else { setErrorMsg('Неверный пароль'); }
   };
 
@@ -77,7 +83,7 @@ function UploadPanel({ onUploaded }: { onUploaded: () => void }) {
       const b64 = (e.target!.result as string).split(',')[1];
       const res = await fetch(UPLOAD_MATERIAL_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-Admin-Password': password },
+        headers: { 'Content-Type': 'application/json', 'X-Admin-Password': adminPassword },
         body: JSON.stringify({ folder, filename: file.name, contentType: file.type, data: b64 }),
       });
       if (res.ok) {
@@ -110,7 +116,7 @@ function UploadPanel({ onUploaded }: { onUploaded: () => void }) {
     <div className="border p-5 space-y-4" style={{ borderColor: '#8b6914', backgroundColor: '#faf7f0' }}>
       <div className="flex items-center justify-between">
         <p className="text-sm font-medium" style={{ color: '#8b6914', fontFamily: 'IBM Plex Sans, sans-serif' }}>Загрузка материала</p>
-        <button onClick={() => { setOpen(false); setAuthed(false); setPassword(''); setStatus('idle'); }}>
+        <button onClick={() => { setOpen(false); setPasswordInput(''); setStatus('idle'); }}>
           <Icon name="X" size={16} style={{ color: 'rgba(26,20,16,0.4)' }} />
         </button>
       </div>
@@ -120,8 +126,8 @@ function UploadPanel({ onUploaded }: { onUploaded: () => void }) {
           <input
             type="password"
             placeholder="Пароль администратора"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
+            value={passwordInput}
+            onChange={e => setPasswordInput(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && checkPassword()}
             className="flex-1 border px-3 py-2 text-sm bg-transparent outline-none"
             style={{ borderColor: '#e8dcc8', color: '#1a1410', fontFamily: 'IBM Plex Sans, sans-serif' }}
@@ -219,6 +225,19 @@ export default function AboutDocumentsMethods() {
   const [lessons, setLessons] = useState<Material[]>([]);
   const [videos, setVideos] = useState<Material[]>([]);
   const [loading, setLoading] = useState(true);
+  const [adminPassword, setAdminPassword] = useState('');
+  const [deleting, setDeleting] = useState<string | null>(null);
+
+  const deleteMaterial = async (key: string) => {
+    setDeleting(key);
+    await fetch(DELETE_MATERIAL_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Password': adminPassword },
+      body: JSON.stringify({ key }),
+    });
+    setDeleting(null);
+    loadMaterials();
+  };
 
   const loadMaterials = () => {
     setLoading(true);
@@ -322,7 +341,7 @@ export default function AboutDocumentsMethods() {
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <SectionTitle icon="BookOpen" title="Методическая копилка" subtitle="Уроки и внеурочная работа" />
-            <UploadPanel onUploaded={loadMaterials} />
+            <UploadPanel onUploaded={loadMaterials} adminPassword={adminPassword} onAuth={setAdminPassword} />
           </div>
 
           {loading && (
@@ -348,12 +367,9 @@ export default function AboutDocumentsMethods() {
                   </h3>
                   <div className="space-y-3">
                     {lessons.map((item) => (
-                      <a
+                      <div
                         key={item.key}
-                        href={item.url}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="flex items-center gap-4 p-3 border cursor-pointer transition-all group no-underline"
+                        className="flex items-center gap-4 p-3 border transition-all"
                         style={{ backgroundColor: '#f5f0e8', borderColor: '#e8dcc8' }}
                       >
                         <Icon name="FileText" fallback="FileText" size={16} style={{ color: '#8b6914', flexShrink: 0 }} />
@@ -365,8 +381,19 @@ export default function AboutDocumentsMethods() {
                             {ext(item.name)} · {formatSize(item.size)}
                           </p>
                         </div>
-                        <Icon name="Download" size={14} style={{ color: 'rgba(26,20,16,0.2)' }} />
-                      </a>
+                        <a href={item.url} target="_blank" rel="noreferrer">
+                          <Icon name="Download" size={14} style={{ color: 'rgba(26,20,16,0.2)' }} />
+                        </a>
+                        {adminPassword && (
+                          <button
+                            onClick={() => deleteMaterial(item.key)}
+                            disabled={deleting === item.key}
+                            title="Удалить"
+                          >
+                            <Icon name={deleting === item.key ? 'Loader' : 'Trash2'} size={14} style={{ color: '#c0392b', opacity: deleting === item.key ? 0.5 : 1 }} />
+                          </button>
+                        )}
+                      </div>
                     ))}
                   </div>
                 </div>
@@ -380,7 +407,7 @@ export default function AboutDocumentsMethods() {
                   </h3>
                   <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     {videos.map((item) => (
-                      <VideoCard key={item.key} item={item} />
+                      <VideoCard key={item.key} item={item} adminPassword={adminPassword} onDelete={deleteMaterial} deleting={deleting} />
                     ))}
                   </div>
                 </div>
